@@ -1,0 +1,169 @@
+---
+import ExperienceList from "@/components/ExperienceList.astro";
+import Hero from "@/components/Hero.astro";
+import ProjectShowcase from "@/components/ProjectShowcase.jsx";
+import SectionHeading from "@/components/SectionHeading.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { portfolio } from "@/data/portfolio";
+
+const { seo, profile, stats, focusAreas, education, experience, projects, presence, skills, toolbox } = portfolio;
+---
+
+<BaseLayout
+  description={seo.description}
+  name={profile.name}
+  role={profile.role}
+  title={seo.title}
+>
+  <Hero profile={profile} stats={stats} />
+
+  <section id="about" class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="panel px-6 py-8 sm:px-8">
+      <SectionHeading
+        eyebrow="About"
+        title="AI, systems, and full-stack engineering grounded in graduate CS work."
+        description="I build across the stack: RAG and LLM reliability, drone perception pipelines, real-time data products, and the backend systems that keep those workflows fast and dependable."
+      />
+    </div>
+    <div class="grid gap-4 sm:grid-cols-3">
+      {
+        focusAreas.map((item) => (
+          <article class="panel px-6 py-6">
+            <p class="section-kicker">{item.title}</p>
+            <p class="pt-3 text-base leading-7 text-[var(--muted)]">{item.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="education" class="space-y-6 pt-2">
+    <SectionHeading
+      eyebrow="Education"
+      title="UC Santa Cruz - software foundations, AI, and training across systems."
+      description="My academic work complements hands-on engineering roles with coursework in distributed systems, machine learning, deep learning, AI, computer vision, databases, algorithms, and probability and statistics."
+    />
+    <div class="grid gap-4 lg:grid-cols-2">
+      {
+        education.map((item) => (
+          <article class="panel px-6 py-6 sm:px-8">
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <p class="text-sm font-semibold tracking-[0.18em] text-[var(--accent-strong)] uppercase">
+                  {item.period}
+                </p>
+                <div>
+                  <h3 class="text-2xl font-semibold text-[var(--ink)]">{item.degree}</h3>
+                  <p class="text-sm text-[var(--muted)]">{item.institution}</p>
+                </div>
+              </div>
+              <ul class="grid gap-3">
+                {
+                  item.details.map((detail) => (
+                    <li class="flex gap-3 text-sm leading-6 text-[var(--muted)]">
+                      <span class="mt-2 h-2 w-2 rounded-full bg-[var(--secondary)]"></span>
+                      <span>{detail}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="experience" class="space-y-6 pt-2">
+    <SectionHeading
+      eyebrow="Experience"
+      title="Research, internships, and teaching with measurable engineering outcomes."
+      description="Recent work spans AI explainability research, autonomous drone systems, real-time computer vision, production-style data ingestion, and teaching support for a 150+ student course."
+    />
+    <ExperienceList items={experience} />
+  </section>
+
+  <section id="projects" class="space-y-6 pt-2">
+    <SectionHeading
+      eyebrow="Selected work"
+      title="Projects that connect AI reliability, data ingestion, and user-facing products."
+      description="These projects reflect the strongest themes from my resume: evidence-backed AI responses, low-latency data systems, resilient pipelines, and full-stack delivery."
+    />
+    <ProjectShowcase client:visible projects={projects} />
+  </section>
+
+  <section id="skills" class="panel grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[0.85fr_1.15fr]">
+    <div class="space-y-4">
+      <p class="section-kicker">{skills.eyebrow}</p>
+      <h2 class="section-title max-w-xl">{skills.title}</h2>
+      <p class="section-copy">{skills.description}</p>
+    </div>
+    <div class="flex flex-wrap content-start gap-3">
+      {
+        toolbox.map((item) => (
+          <span class="tool-pill">{item}</span>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="presence" class="grid gap-6 pt-2 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="panel px-6 py-8 sm:px-8">
+      <SectionHeading
+        eyebrow="Online presence"
+        title="Professional contact points for roles and collaborations."
+        description="The fastest way to verify my background or start a conversation is through LinkedIn or email."
+      />
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        presence.map((item) => (
+          <a
+            class="panel group flex flex-col gap-4 px-6 py-6 transition hover:-translate-y-0.5"
+            href={item.href}
+            rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+            target={item.href.startsWith("http") ? "_blank" : undefined}
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="section-kicker">{item.label}</span>
+              <span class="text-sm font-semibold text-[var(--muted)] transition group-hover:text-[var(--accent-strong)]">
+                {item.href.startsWith("mailto") ? "Email ->" : "Visit ->"}
+              </span>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-2xl font-semibold text-[var(--ink)]">{item.title}</h3>
+              <p class="text-base leading-7 text-[var(--muted)]">{item.description}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="contact" class="panel px-6 py-8 sm:px-8 sm:py-10">
+    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+      <div class="space-y-5">
+        <p class="section-kicker">Contact</p>
+        <h2 class="section-title max-w-2xl">
+          Open to full-time software engineering opportunities.
+        </h2>
+        <p class="section-copy max-w-2xl">
+          I am most interested in roles where AI systems, backend infrastructure,
+          computer vision, data pipelines that are central to the engineering challenge.
+        </p>
+      </div>
+      <div class="grid gap-4">
+        <a class="cta-primary justify-center" href={`mailto:${profile.email}`}>
+          {profile.email}
+        </a>
+        <a class="cta-secondary justify-center" href={`tel:${profile.phone.replace(/\D/g, "")}`}>
+          {profile.phone}
+        </a>
+        <div class="soft-panel">
+          <span class="detail-label">Availability</span>
+          <p class="detail-copy">{profile.availability}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

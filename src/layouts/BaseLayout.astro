@@ -1,0 +1,60 @@
+---
+import "@/styles/global.css";
+
+const { title, description, name, role } = Astro.props;
+
+const navItems = [
+  { label: "About", href: "#about" },
+  { label: "Education", href: "#education" },
+  { label: "Experience", href: "#experience" },
+  { label: "Projects", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "Presence", href: "#presence" },
+  { label: "Contact", href: "#contact" }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f5f0e8" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page-backdrop" aria-hidden="true"></div>
+    <header class="sticky top-0 z-50 px-4 pt-4 sm:px-6">
+      <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-full border border-black/10 bg-white/72 px-4 py-3 shadow-[0_18px_50px_rgba(27,36,48,0.08)] backdrop-blur-md sm:px-5">
+        <a href="#top" class="min-w-0">
+          <span class="block truncate text-sm font-semibold tracking-[0.2em] text-[var(--ink)] uppercase">
+            {name}
+          </span>
+          <span class="block truncate text-xs text-[var(--muted)]">{role}</span>
+        </a>
+        <nav class="hidden items-center gap-5 md:flex">
+          {
+            navItems.map((item) => (
+              <a class="nav-link" href={item.href}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <a class="cta-secondary px-4 py-2 text-sm" href="#contact">Start a conversation</a>
+      </div>
+    </header>
+    <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-4 pb-12 pt-10 sm:px-6 sm:pt-14">
+      <slot />
+    </main>
+  </body>
+</html>
