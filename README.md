@@ -1,55 +1,61 @@
-# Portfolio Template
+# Vihan Patil — Personal Website
 
-A professional portfolio starter built with Astro, React, and Tailwind CSS v4, ready for static deployment on Cloudflare Pages.
+This repository contains my personal website and portfolio.
 
-## Stack
+The site is designed to serve as a central place to showcase my professional background, technical projects, experience, and interests in software engineering, AI systems, and full-stack development. It reflects both my resume and the work I am most excited to build moving forward.
 
-- Astro 5
-- React 19
-- Tailwind CSS 4 with the Vite plugin
-- Static output for Cloudflare Pages
+## About the Website
 
-## Local development
+This website highlights:
 
-```bash
-npm install
-npm run dev
-```
+- Professional experience
+- Technical projects
+- Core skills and tools
+- Academic background
+- Areas of interest in software engineering and AI
+- Contact and portfolio information
 
-Open the dev server URL shown in the terminal.
+The goal of the site is to present a clear, modern, and professional overview of my work while providing a more personal and project-driven complement to my resume.
 
-## Build
+## Focus Areas
 
-```bash
-npm run build
-```
+My current interests include:
 
-The production output is generated in `dist/`.
+- AI systems and applied machine learning
+- Retrieval-augmented generation (RAG) and LLM applications
+- Computer vision and edge-based systems
+- Reliable backend architecture and data-driven products
+- Full-stack web development
 
-## Deploy to Cloudflare Pages
+## Website Highlights
 
-Create a new Pages project and use:
+This portfolio is built to be:
 
-- Build command: `npm run build`
-- Build output directory: `dist`
+- Clean and professional in presentation
+- Fast and lightweight
+- Easy to navigate
+- Focused on project impact and technical depth
+- A strong representation of both my engineering background and personal brand
 
-Cloudflare's Astro Pages guide documents the same static build settings.
+## Tech Stack
 
-## Customize content
+This site is built with:
 
-Update your profile content in:
+- Astro
+- JavaScript
+- React
+- Tailwind CSS
 
-- `src/data/portfolio.js`
+## Purpose
 
-Main page structure and sections live in:
+Beyond functioning as an online resume, this website is intended to show how I think about building software: with clarity, usability, performance, and strong attention to detail.
 
-- `src/pages/index.astro`
+It is also a space I can continue expanding with new projects, experiences, and technical explorations over time.
 
-Global look and feel lives in:
+## Contact
 
-- `src/styles/global.css`
+If you would like to connect, collaborate, or learn more about my work, please reach out through the contact links listed on the site.
 
-## Notes
+---
 
-- The included social and contact links are placeholders. Replace them before publishing.
-- The site is mostly static, with a small React-powered project filter for interaction.
+Built and maintained by Vihan Patil.

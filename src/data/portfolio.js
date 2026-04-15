@@ -30,7 +30,7 @@ export const portfolio = {
     ]
   },
   stats: [
-    { value: "Mar 2026", label: "Expected M.S. in Computer Science and Engineering" },
+    { value: "Mar 2026", label: "M.S. in Computer Science and Engineering" },
     { value: "75%", label: "Image-processing throughput improvement at Vaara Drone" },
     { value: "150+", label: "Students supported as a UCSC teaching assistant" }
   ],
@@ -55,7 +55,7 @@ export const portfolio = {
     {
       institution: "University of California, Santa Cruz",
       degree: "M.S., Computer Science and Engineering",
-      period: "Expected Mar 2026",
+      period: "Sep 2024 - Mar 2026",
       details: [
         "Graduate work spanning distributed systems, machine learning, deep learning, artificial intelligence, computer vision, databases, algorithms, and probability and statistics."
       ]
