@@ -1,0 +1,7 @@
+---
+const { index, label } = Astro.props;
+---
+
+<!-- A real <h2> so the document outline is h1 → h2 → h3, not h1 → h3.
+     The engineering-drawing index is decoration on top of that. -->
+<h2 class="sec-index" data-reveal="up"><b>{index}</b> <span>{label}</span></h2>

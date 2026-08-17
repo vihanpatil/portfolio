@@ -1,0 +1,157 @@
+---
+const { data } = Astro.props;
+
+function ago(iso) {
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 30) return `${days}d ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+}
+---
+
+{data.ok ? (
+  <div class="gh">
+    <div class="gh-summary" data-reveal="up">
+      <div class="gh-stat">
+        <span class="gh-figure">{data.publicRepos}</span>
+        <span class="mono-tag">public repos</span>
+      </div>
+      <div class="gh-stat">
+        <span class="gh-figure">{data.languages.length}</span>
+        <span class="mono-tag">languages</span>
+      </div>
+      <div class="gh-stat">
+        <span class="gh-figure">{data.followers}</span>
+        <span class="mono-tag">followers</span>
+      </div>
+      <a class="key key-ghost gh-cta" href={data.url} rel="noreferrer noopener" target="_blank">
+        @{data.handle} ↗
+      </a>
+    </div>
+
+    <ul class="gh-repos">
+      {data.repos.map((repo, i) => (
+        <li class="gh-repo register glow-target" data-reveal="up" style={`--reveal-delay:${Math.min(i, 5) * 60}ms`}>
+          <a href={repo.url} rel="noreferrer noopener" target="_blank">
+            <div class="gh-repo-head">
+              <span class="gh-repo-name">{repo.name}</span>
+              {repo.fresh && <span class="gh-fresh mono-tag">Active</span>}
+            </div>
+            {repo.description && <p class="gh-repo-desc">{repo.description}</p>}
+            <div class="gh-repo-meta">
+              {repo.language && <span class="mono-data">{repo.language}</span>}
+              <span class="mono-tag">pushed {ago(repo.pushedAt)}</span>
+              {repo.stars > 0 && <span class="mono-tag">★ {repo.stars}</span>}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+) : (
+  /* Designed fallback — the build never fails on a GitHub outage or a
+     profile that isn't publicly readable. Set GITHUB_TOKEN in Vercel to
+     restore live data. */
+  <div class="gh-fallback plate glow-target" data-reveal="up">
+    <span class="mono-amber">Repositories</span>
+    <p class="gh-fallback-copy">
+      Source for the projects above, plus everything else I'm building, lives on GitHub.
+    </p>
+    <a class="key key-primary" href={data.url} rel="noreferrer noopener" target="_blank">
+      github.com/{data.handle} ↗
+    </a>
+  </div>
+)}
+
+<style>
+  .gh-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-8);
+    padding-bottom: var(--s-8);
+  }
+
+  .gh-stat {
+    display: grid;
+    gap: 2px;
+  }
+
+  .gh-figure {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gh-cta {
+    margin-left: auto;
+  }
+
+  .gh-repos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .gh-repo {
+    padding-inline: var(--s-4);
+    margin-inline: calc(var(--s-4) * -1);
+  }
+
+  .gh-repo-head {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .gh-repo-name {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* Recently-pushed repos read as current work, not a stale snapshot. */
+  .gh-fresh {
+    color: var(--amber);
+    border: 1px solid var(--amber-edge);
+    border-radius: 2px;
+    padding: 2px 6px;
+    background: var(--amber-wash);
+  }
+
+  .gh-repo-desc {
+    margin: var(--s-2) 0 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.6;
+    max-width: 60ch;
+  }
+
+  .gh-repo-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    margin-top: var(--s-3);
+  }
+
+  .gh-fallback {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    padding: var(--s-8);
+  }
+
+  .gh-fallback-copy {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-l);
+    line-height: 1.7;
+    max-width: 52ch;
+  }
+</style>

@@ -1,0 +1,163 @@
+---
+const { items } = Astro.props;
+---
+
+<ol class="timeline">
+  {items.map((item, i) => (
+    <li class="timeline-row register glow-target" data-reveal="up" style={`--reveal-delay:${Math.min(i, 4) * 70}ms`}>
+      <div class="timeline-when">
+        <span class="mono-data">{item.from}</span>
+        <span class="timeline-dash" aria-hidden="true"></span>
+        <span class="mono-data">{item.to}</span>
+        <span class={`kind kind-${item.kind}`}>{item.kind === "edu" ? "Education" : "Work"}</span>
+      </div>
+
+      <div class="timeline-what">
+        <h3 class="timeline-role">{item.role}</h3>
+        <p class="timeline-org mono-data">{item.org}</p>
+        <p class="timeline-body">{item.body}</p>
+
+        {item.points.length > 0 && (
+          <ul class="timeline-points">
+            {item.points.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        )}
+
+        {item.stack.length > 0 && (
+          <ul class="chiplist">
+            {item.stack.map((s) => (
+              <li class="chip">{s}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline-row {
+    display: grid;
+    gap: var(--s-4);
+    padding-inline: var(--s-4);
+    margin-inline: calc(var(--s-4) * -1);
+  }
+
+  .timeline-when {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding-top: 2px;
+  }
+
+  .timeline-dash {
+    width: 14px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .kind {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--tr-mono);
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+
+  .kind-edu {
+    color: var(--copper);
+    border-color: color-mix(in srgb, var(--copper) 45%, transparent);
+  }
+
+  .timeline-role {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+    font-variation-settings: "opsz" 36;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .timeline-org {
+    margin: var(--s-1) 0 0;
+    color: var(--amber);
+  }
+
+  .timeline-body {
+    margin: var(--s-3) 0 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+
+  .timeline-points {
+    margin: var(--s-4) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s-3);
+    max-width: 66ch;
+  }
+
+  .timeline-points li {
+    position: relative;
+    padding-left: var(--s-6);
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.7;
+  }
+
+  .timeline-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 10px;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .chiplist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    list-style: none;
+    margin: var(--s-6) 0 0;
+    padding: 0;
+  }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 4px 8px;
+  }
+
+  @media (min-width: 900px) {
+    .timeline-row {
+      grid-template-columns: 232px minmax(0, 1fr);
+      gap: var(--s-8);
+    }
+
+    .timeline-when {
+      align-content: start;
+    }
+  }
+</style>

@@ -1,84 +1,242 @@
 ---
-const { profile, stats } = Astro.props;
+const { profile, signals } = Astro.props;
 ---
 
-<section id="top" class="grid gap-6 lg:grid-cols-[1.35fr_minmax(320px,0.9fr)] lg:gap-8">
-  <div class="panel relative overflow-hidden px-6 py-8 sm:px-8 sm:py-10">
-    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-60"></div>
-    <div class="space-y-7">
-      <div class="space-y-4">
-        <p class="section-kicker">{profile.name}</p>
-        <h1 class="hero-title">{profile.headline}</h1>
-        <p class="hero-copy max-w-2xl">{profile.summary}</p>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <a class="cta-primary" href="#projects">View selected work</a>
-        <a class="cta-secondary" href={`mailto:${profile.email}`}>Email me</a>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        {
-          profile.socialLinks.map((link) => (
-            <a class="social-chip" href={link.href} rel="noreferrer" target="_blank">
-              {link.label}
-            </a>
-          ))
-        }
-      </div>
-      <div class="grid gap-4 pt-4 sm:grid-cols-3">
-        {
-          stats.map((item) => (
-            <div class="metric-card">
-              <span class="metric-value">{item.value}</span>
-              <p class="metric-label">{item.label}</p>
-            </div>
-          ))
-        }
+<section class="hero" id="top">
+  <div class="shell hero-inner">
+    <div class="hero-lead">
+      <p class="mono-amber hero-meta" data-reveal="up">
+        <span class="pulse" aria-hidden="true"></span>
+        Available for full-time roles
+      </p>
+
+      <h1 class="display-xl hero-title">
+        {profile.headline.map((line, i) => (
+          <span class="hero-line">
+            <span class="hero-line-in" data-reveal="wipe" style={`--reveal-delay:${i * 110}ms`}>
+              {line}
+            </span>
+          </span>
+        ))}
+      </h1>
+
+      <p class="prose hero-lede" data-reveal="up" style="--reveal-delay:340ms">{profile.lede}</p>
+
+      <div class="hero-actions" data-reveal="up" style="--reveal-delay:420ms">
+        <a class="key key-primary" href="#projects">See the work</a>
+        <a class="key key-ghost" href={`mailto:${profile.email}`}>Get in touch</a>
       </div>
     </div>
+
+    <aside class="hero-side" data-reveal="left" style="--reveal-delay:200ms">
+      <dl class="spec">
+        <div class="spec-row">
+          <dt class="mono-tag">Based</dt>
+          <dd class="mono-data">{profile.location}</dd>
+        </div>
+        <div class="spec-row">
+          <dt class="mono-tag">Status</dt>
+          <dd class="mono-data">Open · US Citizen</dd>
+        </div>
+        <div class="spec-row">
+          <dt class="mono-tag">Focus</dt>
+          <dd class="mono-data">AI systems · Backend · Computer Vision</dd>
+        </div>
+      </dl>
+
+      <p class="hero-now">{profile.now}</p>
+    </aside>
   </div>
-  <aside class="panel px-6 py-8 sm:px-8 sm:py-10">
-    <div class="space-y-6">
-      <div class="space-y-3">
-        <p class="section-kicker">Current focus</p>
-        <p class="text-2xl leading-tight font-semibold text-[var(--ink)]">
-          {profile.currentFocus}
-        </p>
-      </div>
-      <div class="grid gap-4">
-        <div class="soft-panel">
-          <span class="detail-label">Location</span>
-          <p class="detail-copy">{profile.location}</p>
-        </div>
-        <div class="soft-panel">
-          <span class="detail-label">Availability</span>
-          <p class="detail-copy">{profile.availability}</p>
-        </div>
-      </div>
-      <div class="grid gap-3">
-        <span class="detail-label">Ideal engagements</span>
-        <div class="flex flex-wrap gap-2">
-          {
-            profile.engagementTypes.map((item) => (
-              <span class="inline-flex rounded-full border border-black/10 bg-white px-3 py-1 text-sm font-medium text-[var(--ink)]">
-                {item}
-              </span>
-            ))
-          }
-        </div>
-      </div>
-      <div class="grid gap-3">
-        <span class="detail-label">How I work</span>
-        <ul class="grid gap-3 text-sm leading-6 text-[var(--muted)]">
-          {
-            profile.workingStyle.map((item) => (
-              <li class="flex gap-3">
-                <span class="mt-2 h-2 w-2 rounded-full bg-[var(--accent)]"></span>
-                <span>{item}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </div>
-  </aside>
+
+  <!-- Signals: mono figures ruled into the grid, not floating stat pills. -->
+  <div class="shell">
+    <ul class="signals">
+      {signals.map((s, i) => (
+        <li class="signal" data-reveal="up" style={`--reveal-delay:${i * 90}ms`}>
+          <span class="signal-figure">
+            {s.figure}
+            <span class="signal-unit mono-tag">{s.unit}</span>
+          </span>
+          <p class="signal-note">{s.note}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
 </section>
+
+<style>
+  .hero {
+    padding-top: clamp(var(--s-16), 11vh, var(--s-32));
+    padding-bottom: var(--s-16);
+  }
+
+  .hero-inner {
+    display: grid;
+    gap: var(--s-12);
+    align-items: start;
+  }
+
+  .hero-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin: 0 0 var(--s-8);
+  }
+
+  .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 0 0 var(--amber-edge);
+    animation: pulse 2.6s var(--ease-glide) infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0.5); }
+    70% { box-shadow: 0 0 0 9px rgba(255, 178, 77, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 178, 77, 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse { animation: none; }
+  }
+
+  .hero-title {
+    margin: 0;
+    /* Pointer parallax. --parallax is 0 under reduced motion, so this
+       flattens to translate(0,0) with no JS branch required. */
+    transform: translate3d(
+      calc(var(--pointer-x, 0) * -10px * var(--parallax)),
+      calc(var(--pointer-y, 0) * -6px * var(--parallax)),
+      0
+    );
+    transition: transform 600ms var(--ease-glide);
+  }
+
+  .hero-line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero-line-in {
+    display: block;
+  }
+
+  .hero-line:nth-child(2) {
+    padding-left: 0.08em;
+    color: var(--amber);
+  }
+
+  .hero-lede {
+    margin-top: var(--s-8);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-8);
+  }
+
+  .hero-side {
+    display: grid;
+    gap: var(--s-6);
+    transform: translate3d(
+      calc(var(--pointer-x, 0) * 6px * var(--parallax)),
+      calc(var(--pointer-y, 0) * 4px * var(--parallax)),
+      0
+    );
+    transition: transform 700ms var(--ease-glide);
+  }
+
+  .spec {
+    margin: 0;
+    display: grid;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding-block: var(--s-3);
+    border-top: 1px solid var(--line);
+  }
+
+  .spec-row:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .spec dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .hero-now {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.75;
+  }
+
+  .signals {
+    list-style: none;
+    margin: clamp(var(--s-16), 10vh, var(--s-24)) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-8);
+    border-top: 1px solid var(--line);
+  }
+
+  .signal {
+    padding-top: var(--s-6);
+  }
+
+  .signal-figure {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .signal-unit {
+    font-size: var(--t-mono-xs);
+  }
+
+  .signal-note {
+    margin: var(--s-3) 0 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.65;
+    max-width: 34ch;
+  }
+
+  @media (min-width: 760px) {
+    .signals {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-8);
+    }
+
+    .signal + .signal {
+      border-left: 1px solid var(--line);
+      padding-left: var(--s-8);
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+      gap: var(--s-16);
+    }
+
+    .hero-side {
+      padding-top: var(--s-12);
+    }
+  }
+</style>

@@ -1,16 +1,14 @@
 ---
 import "@/styles/global.css";
+import fraunces from "@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url";
 
-const { title, description, name, role } = Astro.props;
+const { title, description } = Astro.props;
 
-const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Education", href: "#education" },
-  { label: "Experience", href: "#experience" },
+const nav = [
+  { label: "Work", href: "#work" },
   { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Presence", href: "#presence" },
-  { label: "Contact", href: "#contact" }
+  { label: "GitHub", href: "#github" },
+  { label: "Contact", href: "#contact" },
 ];
 ---
 
@@ -18,43 +16,270 @@ const navItems = [
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f5f0e8" />
-    <title>{title}</title>
+    <meta name="theme-color" content="#0B0B0F" />
+    <meta name="color-scheme" content="dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Only the display face is preloaded — it sets the LCP text. -->
+    <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
+
   </head>
+
   <body>
-    <div class="page-backdrop" aria-hidden="true"></div>
-    <header class="sticky top-0 z-50 px-4 pt-4 sm:px-6">
-      <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-full border border-black/10 bg-white/72 px-4 py-3 shadow-[0_18px_50px_rgba(27,36,48,0.08)] backdrop-blur-md sm:px-5">
-        <a href="#top" class="min-w-0">
-          <span class="block truncate text-sm font-semibold tracking-[0.2em] text-[var(--ink)] uppercase">
-            {name}
-          </span>
-          <span class="block truncate text-xs text-[var(--muted)]">{role}</span>
-        </a>
-        <nav class="hidden items-center gap-5 md:flex">
-          {
-            navItems.map((item) => (
-              <a class="nav-link" href={item.href}>
-                {item.label}
-              </a>
-            ))
-          }
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="field" aria-hidden="true"><canvas id="field"></canvas></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="content">
+      <header class="site-head">
+        <div class="shell site-head-inner">
+          <a class="wordmark" href="#top">
+            <span class="wordmark-name">Vihan Patil</span>
+            <span class="mono-tag wordmark-role">Software Engineer</span>
+          </a>
+
+          <nav class="nav-desktop" aria-label="Primary">
+            {nav.map((item) => <a class="nav-link" href={item.href}>{item.label}</a>)}
+            <a class="nav-resume" href="/Vihan_Patil_Resume.pdf" download>Résumé ↓</a>
+          </nav>
+
+          <button
+            class="nav-toggle"
+            id="nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="nav-mobile"
+            aria-label="Open menu"
+          >
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+        </div>
+
+        <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile" hidden>
+          {nav.map((item) => <a class="nav-mobile-link" href={item.href}>{item.label}</a>)}
+          <a class="nav-mobile-link" href="/Vihan_Patil_Resume.pdf" download>Résumé ↓</a>
+          <a class="nav-mobile-link nav-mobile-cta" href="mailto:vihanpatil7@gmail.com">Email me</a>
         </nav>
-        <a class="cta-secondary px-4 py-2 text-sm" href="#contact">Start a conversation</a>
-      </div>
-    </header>
-    <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-4 pb-12 pt-10 sm:px-6 sm:pt-14">
-      <slot />
-    </main>
+      </header>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer class="site-foot">
+        <div class="shell site-foot-inner">
+          <span class="foot-line">© {new Date().getFullYear()} Vihan Patil</span>
+          <span class="foot-line">San Jose, CA</span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      import { initField } from "@/scripts/field.js";
+      import { initReveals } from "@/scripts/reveal.js";
+      import { initNav } from "@/scripts/nav.js";
+
+      const canvas = document.getElementById("field");
+      if (canvas) initField(canvas);
+      initReveals();
+      initNav();
+    </script>
+
+    <style>
+      .site-head {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        background: color-mix(in srgb, var(--base) 82%, transparent);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .site-head-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s-6);
+        min-height: clamp(84px, 8.5vh, 112px);
+      }
+
+      .wordmark {
+        display: grid;
+        align-content: center;
+        gap: 4px;
+        min-height: 44px; /* touch target */
+        line-height: 1.05;
+      }
+
+      /* The name is the thing that should register first. */
+      .wordmark-name {
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+        font-variation-settings: "opsz" 48;
+        letter-spacing: -0.02em;
+      }
+
+      .wordmark-role {
+        font-size: 0.75rem;
+        letter-spacing: 0.18em;
+      }
+
+      .nav-desktop {
+        display: none;
+        align-items: center;
+        gap: var(--s-8);
+      }
+
+      .nav-link {
+        position: relative;
+        font-family: var(--font-mono);
+        font-size: 0.8125rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        padding-block: var(--s-3);
+        transition: color var(--dur-2) var(--ease-glide);
+      }
+
+      .nav-resume {
+        font-family: var(--font-mono);
+        font-size: 0.8125rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--amber);
+        border: 1px solid var(--amber-edge);
+        border-radius: 2px;
+        padding: 10px 14px;
+        transition:
+          background var(--dur-2) var(--ease-glide),
+          box-shadow var(--dur-2) var(--ease-glide);
+      }
+
+      .nav-resume:hover {
+        background: var(--amber-wash);
+        box-shadow: 0 0 24px -8px var(--amber-glow);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: var(--amber);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--dur-2) var(--ease-glide);
+      }
+
+      .nav-link:hover,
+      .nav-link.is-active {
+        color: var(--amber);
+      }
+
+      .nav-link:hover::after,
+      .nav-link.is-active::after {
+        transform: scaleX(1);
+      }
+
+      .nav-toggle {
+        display: grid;
+        place-content: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        margin-right: -10px;
+        background: none;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        cursor: pointer;
+      }
+
+      .nav-toggle-bar {
+        display: block;
+        width: 18px;
+        height: 1.5px;
+        background: var(--ink);
+        transition: transform var(--dur-2) var(--ease-glide), opacity var(--dur-1) linear;
+      }
+
+      .nav-toggle[aria-expanded="true"] .nav-toggle-bar:first-child {
+        transform: translateY(3.25px) rotate(45deg);
+      }
+
+      .nav-toggle[aria-expanded="true"] .nav-toggle-bar:last-child {
+        transform: translateY(-3.25px) rotate(-45deg);
+      }
+
+      .nav-mobile {
+        display: grid;
+        border-top: 1px solid var(--line);
+        padding: var(--s-2) var(--gutter) var(--s-6);
+      }
+
+      .nav-mobile[hidden] {
+        display: none;
+      }
+
+      .nav-mobile-link {
+        display: flex;
+        align-items: center;
+        min-height: 52px;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--font-mono);
+        font-size: var(--t-mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      .nav-mobile-cta {
+        border-bottom: none;
+        color: var(--amber);
+      }
+
+      .site-foot {
+        border-top: 1px solid var(--line);
+        padding-block: var(--s-12);
+      }
+
+      .site-foot-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--s-4);
+        flex-wrap: wrap;
+      }
+
+      .foot-line {
+        font-family: var(--font-mono);
+        font-size: 0.9375rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      @media (min-width: 860px) {
+        .nav-desktop {
+          display: flex;
+        }
+        .nav-toggle,
+        .nav-mobile {
+          display: none;
+        }
+      }
+    </style>
   </body>
 </html>

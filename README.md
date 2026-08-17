@@ -1,61 +1,75 @@
-# Vihan Patil — Personal Website
+# vihanpatil.com
 
-This repository contains my personal website and portfolio.
+Personal engineering portfolio. Astro, static output, deployed on Vercel.
 
-The site is designed to serve as a central place to showcase my professional background, technical projects, experience, and interests in software engineering, AI systems, and full-stack development. It reflects both my resume and the work I am most excited to build moving forward.
+## Run it
 
-## About the Website
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # -> dist/
+```
 
-This website highlights:
+## Stack
 
-- Professional experience
-- Technical projects
-- Core skills and tools
-- Academic background
-- Areas of interest in software engineering and AI
-- Contact and portfolio information
+- **Astro 5**, `output: "static"` — deliberate. The Vercel project is
+  dashboard-configured with the auto-detected Astro preset (`astro build` →
+  `dist/`), so there is no `vercel.json` to keep in sync. Adding an adapter
+  or switching to SSR would require changing the Vercel project settings.
+- **Tailwind 4** via `@tailwindcss/vite`, used alongside a hand-rolled token
+  system in `src/styles/tokens.css`.
+- **No UI framework.** Every interactive piece is vanilla JS against the
+  DOM or a canvas. Total page JS is ~5.5 KB gzipped.
+- Self-hosted variable fonts (Fraunces, Manrope, JetBrains Mono) via
+  `@fontsource-variable`, latin-subset, with only the display face preloaded.
 
-The goal of the site is to present a clear, modern, and professional overview of my work while providing a more personal and project-driven complement to my resume.
+## Layout
 
-## Focus Areas
+```
+src/
+  data/portfolio.js     all site content — copy, timeline, projects
+  lib/github.js         build-time GitHub fetch (never throws)
+  styles/tokens.css     palette, type scale, spacing, motion tokens
+  styles/global.css     base + shared component classes
+  scripts/              field, reveal, nav, coverage, match, architecture, lightbox
+  components/           Hero, Timeline, ProjectWindows, GitHubPanel, SectionHead
+```
 
-My current interests include:
+## Design system
 
-- AI systems and applied machine learning
-- Retrieval-augmented generation (RAG) and LLM applications
-- Computer vision and edge-based systems
-- Reliable backend architecture and data-driven products
-- Full-stack web development
+Obsidian base (`#0B0B0F`) with a scarce amber accent. All text colours are
+verified against WCAG AA — see the ratios annotated in `tokens.css`.
+`--ink-3` is **non-text decoration only** (3.65:1); assigning it to copy is a
+contrast failure.
 
-## Website Highlights
+Motion is token-driven. `prefers-reduced-motion` zeroes `--parallax` and
+collapses all durations at the token level, so consumers inherit the static
+state without a JS branch. Scroll reveals are opt-in: content is visible by
+default and JS adds `.reveal-on` to arm the animation, so a failed script or
+a throttled IntersectionObserver can never leave the page blank.
 
-This portfolio is built to be:
+## GitHub integration
 
-- Clean and professional in presentation
-- Fast and lightweight
-- Easy to navigate
-- Focused on project impact and technical depth
-- A strong representation of both my engineering background and personal brand
+`src/lib/github.js` fetches repos at build time and never throws — a failure
+logs a warning and renders a designed fallback panel instead of breaking the
+build. Freshness comes from redeploying, not ISR (which would cost the
+zero-config static pipeline).
 
-## Tech Stack
+Set `GITHUB_TOKEN` in the Vercel project to raise the rate limit or to read a
+profile that is not publicly visible.
 
-This site is built with:
+## Project demos
 
-- Astro
-- JavaScript
-- React
-- Tailwind CSS
+Flagship projects each get a real "window" rather than a description card:
 
-## Purpose
+| Project | Window |
+| --- | --- |
+| HealthWise | Lazy YouTube lightbox + interactive retrieval pipeline |
+| SwathKeeper | Live coverage-path planner on canvas (drag obstacles to re-plan) |
+| FinScreen | Interactive EDGAR ingest→label pipeline map |
+| Blockchain Analytics | Interactive ingestion-architecture map |
+| MatchDesk | Client-side requirement-coverage scorer |
 
-Beyond functioning as an online resume, this website is intended to show how I think about building software: with clarity, usability, performance, and strong attention to detail.
-
-It is also a space I can continue expanding with new projects, experiences, and technical explorations over time.
-
-## Contact
-
-If you would like to connect, collaborate, or learn more about my work, please reach out through the contact links listed on the site.
-
----
-
-Built and maintained by Vihan Patil.
+The coverage planner runs the real algorithm: columns split into contiguous
+free runs, traversed in alternating direction, with A* joining the runs so
+transits route around obstacles instead of through them.

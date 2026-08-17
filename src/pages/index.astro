@@ -1,169 +1,307 @@
 ---
-import ExperienceList from "@/components/ExperienceList.astro";
-import Hero from "@/components/Hero.astro";
-import ProjectShowcase from "@/components/ProjectShowcase.jsx";
-import SectionHeading from "@/components/SectionHeading.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/Hero.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import Timeline from "@/components/Timeline.astro";
+import ProjectWindows from "@/components/ProjectWindows.astro";
+import GitHubPanel from "@/components/GitHubPanel.astro";
 import { portfolio } from "@/data/portfolio";
+import { getGitHub } from "@/lib/github";
 
-const { seo, profile, stats, focusAreas, education, experience, projects, presence, skills, toolbox } = portfolio;
+const { seo, profile, signals, about, timeline, projects, archive, skills } = portfolio;
+
+// Build-time fetch. Never throws — falls back to a designed panel.
+// Pin repos that back a featured project so the fork filter can't hide them.
+const github = await getGitHub(profile.github, {
+  pin: ["HealthWise"],
+  exclude: ["memory-app", "portfolio"],
+});
 ---
 
-<BaseLayout
-  description={seo.description}
-  name={profile.name}
-  role={profile.role}
-  title={seo.title}
->
-  <Hero profile={profile} stats={stats} />
+<BaseLayout description={seo.description} title={seo.title}>
+  <Hero profile={profile} signals={signals} />
 
-  <section id="about" class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-    <div class="panel px-6 py-8 sm:px-8">
-      <SectionHeading
-        eyebrow="About"
-        title="AI, systems, and full-stack engineering grounded in graduate CS work."
-        description="I build across the stack: RAG and LLM reliability, drone perception pipelines, real-time data products, and the backend systems that keep those workflows fast and dependable."
-      />
-    </div>
-    <div class="grid gap-4 sm:grid-cols-3">
-      {
-        focusAreas.map((item) => (
-          <article class="panel px-6 py-6">
-            <p class="section-kicker">{item.title}</p>
-            <p class="pt-3 text-base leading-7 text-[var(--muted)]">{item.description}</p>
-          </article>
-        ))
-      }
+  <!-- Archetype C: statement. Wide margins, display type, no grid. -->
+  <section class="sec" id="about">
+    <div class="shell">
+      <SectionHead index="01" label="Context" />
+      <div class="statement">
+        {about.lines.map((line, i) => (
+          <p class={i === 0 ? "statement-lead" : "statement-body"} data-reveal="up" style={`--reveal-delay:${i * 90}ms`}>
+            {line}
+          </p>
+        ))}
+      </div>
     </div>
   </section>
 
-  <section id="education" class="space-y-6 pt-2">
-    <SectionHeading
-      eyebrow="Education"
-      title="UC Santa Cruz - software foundations, AI, and training across systems."
-      description="My academic work complements hands-on engineering roles with coursework in distributed systems, machine learning, deep learning, AI, computer vision, databases, algorithms, and probability and statistics."
-    />
-    <div class="grid gap-4 lg:grid-cols-2">
-      {
-        education.map((item) => (
-          <article class="panel px-6 py-6 sm:px-8">
-            <div class="space-y-4">
-              <div class="space-y-2">
-                <p class="text-sm font-semibold tracking-[0.18em] text-[var(--accent-strong)] uppercase">
-                  {item.period}
-                </p>
-                <div>
-                  <h3 class="text-2xl font-semibold text-[var(--ink)]">{item.degree}</h3>
-                  <p class="text-sm text-[var(--muted)]">{item.institution}</p>
-                </div>
+  <!-- Archetype A: register. Hairline rows, data-dense. -->
+  <section class="sec" id="work">
+    <div class="shell">
+      <SectionHead index="02" label="Experience & Education" />
+      <Timeline items={timeline} />
+    </div>
+  </section>
+
+  <!-- Archetype B: windows. Media-led, alternating sides. -->
+  <section class="sec" id="projects">
+    <div class="shell">
+      <SectionHead index="03" label="Selected Work" />
+      <p class="sec-lede prose" data-reveal="up">
+        Five projects with something to actually look at — a recording, a planner you can drag, a
+        scorer you can run, pipelines you can open up.
+      </p>
+    </div>
+    <div class="shell">
+      <ProjectWindows projects={projects} />
+    </div>
+  </section>
+
+  <section class="sec" id="github">
+    <div class="shell">
+      <SectionHead index="04" label="On GitHub" />
+      <GitHubPanel data={github} />
+    </div>
+  </section>
+
+  <section class="sec" id="skills">
+    <div class="shell">
+      <SectionHead index="05" label="Toolkit" />
+      <div class="skills">
+        {skills.map((group, i) => (
+          <div class="skill-group" data-reveal="up" style={`--reveal-delay:${i * 80}ms`}>
+            <h3 class="skill-title mono-amber">{group.group}</h3>
+            <ul class="skill-items">
+              {group.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {archive.length > 0 && (
+        <div class="archive">
+          <h3 class="archive-head mono-amber">Also built</h3>
+          {archive.map((item) => (
+            <div class="archive-row register glow-target" data-reveal="up">
+              <div class="archive-main">
+                <h4 class="archive-name">{item.name}</h4>
+                <p class="archive-blurb">{item.blurb}</p>
+                <ul class="chiplist archive-chips">
+                  {item.stack.map((s) => <li class="chip">{s}</li>)}
+                </ul>
               </div>
-              <ul class="grid gap-3">
-                {
-                  item.details.map((detail) => (
-                    <li class="flex gap-3 text-sm leading-6 text-[var(--muted)]">
-                      <span class="mt-2 h-2 w-2 rounded-full bg-[var(--secondary)]"></span>
-                      <span>{detail}</span>
-                    </li>
-                  ))
-                }
-              </ul>
+              <div class="archive-side">
+                <span class="mono-data archive-period">{item.period}</span>
+                {item.repo && (
+                  <a class="link-charge archive-repo" href={item.repo} rel="noreferrer noopener" target="_blank">
+                    Repository ↗
+                  </a>
+                )}
+              </div>
             </div>
-          </article>
-        ))
-      }
-    </div>
-  </section>
-
-  <section id="experience" class="space-y-6 pt-2">
-    <SectionHeading
-      eyebrow="Experience"
-      title="Research, internships, and teaching with measurable engineering outcomes."
-      description="Recent work spans AI explainability research, autonomous drone systems, real-time computer vision, production-style data ingestion, and teaching support for a 150+ student course."
-    />
-    <ExperienceList items={experience} />
-  </section>
-
-  <section id="projects" class="space-y-6 pt-2">
-    <SectionHeading
-      eyebrow="Selected work"
-      title="Projects that connect AI reliability, data ingestion, and user-facing products."
-      description="These projects reflect the strongest themes from my resume: evidence-backed AI responses, low-latency data systems, resilient pipelines, and full-stack delivery."
-    />
-    <ProjectShowcase client:visible projects={projects} />
-  </section>
-
-  <section id="skills" class="panel grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[0.85fr_1.15fr]">
-    <div class="space-y-4">
-      <p class="section-kicker">{skills.eyebrow}</p>
-      <h2 class="section-title max-w-xl">{skills.title}</h2>
-      <p class="section-copy">{skills.description}</p>
-    </div>
-    <div class="flex flex-wrap content-start gap-3">
-      {
-        toolbox.map((item) => (
-          <span class="tool-pill">{item}</span>
-        ))
-      }
-    </div>
-  </section>
-
-  <section id="presence" class="grid gap-6 pt-2 lg:grid-cols-[0.9fr_1.1fr]">
-    <div class="panel px-6 py-8 sm:px-8">
-      <SectionHeading
-        eyebrow="Online presence"
-        title="Professional contact points for roles and collaborations."
-        description="The fastest way to verify my background or start a conversation is through LinkedIn or email."
-      />
-    </div>
-    <div class="grid gap-4 sm:grid-cols-2">
-      {
-        presence.map((item) => (
-          <a
-            class="panel group flex flex-col gap-4 px-6 py-6 transition hover:-translate-y-0.5"
-            href={item.href}
-            rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-            target={item.href.startsWith("http") ? "_blank" : undefined}
-          >
-            <div class="flex items-center justify-between gap-3">
-              <span class="section-kicker">{item.label}</span>
-              <span class="text-sm font-semibold text-[var(--muted)] transition group-hover:text-[var(--accent-strong)]">
-                {item.href.startsWith("mailto") ? "Email ->" : "Visit ->"}
-              </span>
-            </div>
-            <div class="space-y-2">
-              <h3 class="text-2xl font-semibold text-[var(--ink)]">{item.title}</h3>
-              <p class="text-base leading-7 text-[var(--muted)]">{item.description}</p>
-            </div>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
-  <section id="contact" class="panel px-6 py-8 sm:px-8 sm:py-10">
-    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-      <div class="space-y-5">
-        <p class="section-kicker">Contact</p>
-        <h2 class="section-title max-w-2xl">
-          Open to full-time software engineering opportunities.
-        </h2>
-        <p class="section-copy max-w-2xl">
-          I am most interested in roles where AI systems, backend infrastructure,
-          computer vision, data pipelines that are central to the engineering challenge.
-        </p>
-      </div>
-      <div class="grid gap-4">
-        <a class="cta-primary justify-center" href={`mailto:${profile.email}`}>
-          {profile.email}
-        </a>
-        <a class="cta-secondary justify-center" href={`tel:${profile.phone.replace(/\D/g, "")}`}>
-          {profile.phone}
-        </a>
-        <div class="soft-panel">
-          <span class="detail-label">Availability</span>
-          <p class="detail-copy">{profile.availability}</p>
+          ))}
         </div>
+      )}
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="shell contact">
+      <SectionHead index="06" label="Contact" />
+      <p class="display-l contact-title" data-reveal="up">
+        Looking for a team where the hard part is the engineering.
+      </p>
+      <p class="prose contact-lede" data-reveal="up" style="--reveal-delay:80ms">
+        Entry-level software engineering roles, ideally AI/ML-adjacent or systems-heavy. If that's
+        what you're hiring for, the fastest route is email.
+      </p>
+
+      <div class="contact-actions" data-reveal="up" style="--reveal-delay:140ms">
+        <a class="key key-primary" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a class="key key-ghost" href={`tel:${profile.phone.replace(/\D/g, "")}`}>{profile.phone}</a>
+        <a class="key key-ghost" href={profile.linkedin} rel="noreferrer noopener" target="_blank">
+          LinkedIn ↗
+        </a>
+        <a class="key key-ghost" href={profile.resume} download>Résumé ↓</a>
       </div>
+
+      <p class="contact-note mono-tag" data-reveal="up">{profile.availability}</p>
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  import { initLightbox } from "@/scripts/lightbox.js";
+  import { initCoverage } from "@/scripts/coverage.js";
+  import { initMatch } from "@/scripts/match.js";
+  import { initArchitecture } from "@/scripts/architecture.js";
+
+  document.querySelectorAll("[data-lightbox]").forEach(initLightbox);
+  document.querySelectorAll("[data-coverage]").forEach(initCoverage);
+  document.querySelectorAll("[data-match]").forEach(initMatch);
+  document.querySelectorAll("[data-architecture]").forEach(initArchitecture);
+</script>
+
+<style>
+  .statement {
+    max-width: 68ch;
+  }
+
+  .statement-lead {
+    margin: 0 0 var(--s-6);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.8vw, 2.125rem);
+    font-variation-settings: "opsz" 48;
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .statement-body {
+    margin: 0 0 var(--s-5);
+    color: var(--ink-2);
+    font-size: var(--t-body-l);
+    line-height: var(--lh-body);
+  }
+
+  .sec-lede {
+    margin-bottom: var(--s-16);
+  }
+
+  .skills {
+    display: grid;
+    gap: var(--s-8);
+  }
+
+  .skill-group {
+    border-top: 1px solid var(--line);
+    padding-top: var(--s-4);
+  }
+
+  .skill-title {
+    margin: 0 0 var(--s-4);
+  }
+
+  .skill-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .skill-items li {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 10px;
+    transition: border-color var(--dur-2) var(--ease-glide), color var(--dur-2) var(--ease-glide);
+  }
+
+  .skill-items li:hover {
+    border-color: var(--amber-edge);
+    color: var(--ink);
+  }
+
+  .archive {
+    margin-top: var(--s-16);
+  }
+
+  .archive-head {
+    margin: 0 0 var(--s-4);
+    font-size: var(--t-mono);
+  }
+
+  .archive-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--s-6);
+    flex-wrap: wrap;
+    padding-inline: var(--s-4);
+    margin-inline: calc(var(--s-4) * -1);
+  }
+
+  .archive-main {
+    flex: 1 1 26rem;
+  }
+
+  .archive-side {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: end;
+    text-align: right;
+  }
+
+  .archive-repo {
+    font-size: var(--t-body-s);
+    white-space: nowrap;
+  }
+
+  .archive-chips {
+    margin-top: var(--s-4);
+  }
+
+  .archive-name {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .archive-blurb {
+    margin: var(--s-3) 0 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.7;
+    max-width: 68ch;
+  }
+
+  .contact-title {
+    margin: 0;
+    max-width: 18ch;
+  }
+
+  /* Contact copy is the conversion point — set it larger than body prose. */
+  .contact-lede {
+    margin-top: var(--s-6);
+    font-size: clamp(1.1875rem, 1.9vw, 1.5rem);
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 46ch;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-12);
+  }
+
+  .contact-actions .key {
+    font-size: 0.9375rem;
+    padding: var(--s-4) var(--s-8);
+    min-height: 56px;
+  }
+
+  .contact-note {
+    margin-top: var(--s-8);
+    font-size: 0.9375rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 800px) {
+    .skills {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--s-12) var(--s-8);
+    }
+  }
+</style>

@@ -1,0 +1,700 @@
+---
+const { projects } = Astro.props;
+---
+
+<div class="projects">
+  {projects.map((project, i) => (
+    <article class="project" id={`project-${project.slug}`}>
+      <header class="project-head" data-reveal="up">
+        <span class="project-num mono-tag">{String(i + 1).padStart(2, "0")}</span>
+        <div class="project-title-wrap">
+          <h3 class="display-l project-name">{project.name}</h3>
+          <p class="project-meta">
+            <span class="mono-amber">{project.tag}</span>
+            <span class="project-dot" aria-hidden="true">·</span>
+            <span class="mono-data">{project.period}</span>
+          </p>
+          {project.status && <p class="project-status">{project.status}</p>}
+        </div>
+      </header>
+
+      <div class="project-body">
+        <div class="project-copy" data-reveal="up" style="--reveal-delay:80ms">
+          <p class="project-blurb">{project.blurb}</p>
+          <p class="project-detail">{project.detail}</p>
+
+          <ul class="chiplist">
+            {project.stack.map((s) => <li class="chip">{s}</li>)}
+          </ul>
+
+          {project.repo && (
+            <p class="project-links">
+              <a class="link-charge" href={project.repo} rel="noreferrer noopener" target="_blank">
+                View repository ↗
+              </a>
+            </p>
+          )}
+        </div>
+
+        <div class="project-window" data-reveal="up" style="--reveal-delay:140ms">
+          {/* ---------- VIDEO ---------- */}
+          {project.window === "video" && (
+            <div class="media" data-lightbox data-video={project.video.id} data-title={project.video.title}>
+              <button class="poster" type="button" data-open aria-label={`Play ${project.video.title}`}>
+                <img
+                  src="/media/healthwise-poster.jpg"
+                  alt=""
+                  width="1280"
+                  height="720"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="poster-scrim" aria-hidden="true"></span>
+                <span class="poster-play" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 4l14 8-14 8V4z" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+                <span class="poster-label mono-tag">{project.video.duration}</span>
+              </button>
+
+              <dialog class="lightbox" aria-label={project.video.title}>
+                <div class="lightbox-panel">
+                  <div class="lightbox-bar">
+                    <span class="mono-amber">{project.video.title}</span>
+                    <button class="lightbox-close" type="button" data-close aria-label="Close video">✕</button>
+                  </div>
+                  <div class="lightbox-frame" data-frame></div>
+                </div>
+              </dialog>
+            </div>
+          )}
+
+          {/* ---------- COVERAGE PLANNER ---------- */}
+          {project.window === "coverage" && (
+            <div class="demo" data-coverage>
+              <div class="demo-bar">
+                <span class="mono-amber">Coverage planner — live</span>
+                <button class="demo-btn" type="button" data-replay>Replay sweep</button>
+              </div>
+              <canvas class="demo-canvas" role="img" aria-label="Coverage path planning simulation over a field with obstacles"></canvas>
+              <div class="demo-readout" data-readout>
+                <span><b data-cov>—</b> coverage</span>
+                <span><b data-cells>—</b> cells swept</span>
+                <span><b data-turns>—</b> turns</span>
+              </div>
+              <p class="demo-hint mono-tag">Drag an obstacle to re-plan the route</p>
+            </div>
+          )}
+
+          {/* ---------- MATCH SCORER ---------- */}
+          {project.window === "match" && (
+            <div class="demo" data-match>
+              <div class="demo-bar" role="tablist" aria-label="Sample candidate">
+                {["vihan", "backend", "research"].map((id, idx) => (
+                  <button
+                    class={`demo-tab${idx === 0 ? " is-active" : ""}`}
+                    type="button"
+                    role="tab"
+                    data-candidate={id}
+                    aria-selected={idx === 0 ? "true" : "false"}
+                  >
+                    {id === "vihan" ? "This resume" : id === "backend" ? "Backend generalist" : "Research-only"}
+                  </button>
+                ))}
+              </div>
+
+              <div class="match-score">
+                <span class="match-figure" data-score>—</span>
+                <span class="match-caption mono-tag">match against sample posting</span>
+                <span class="match-bar" data-bar aria-hidden="true"></span>
+              </div>
+
+              <ul class="reqs" data-requirements></ul>
+            </div>
+          )}
+
+          {/* ---------- ARCHITECTURE PIPELINE ---------- */}
+          {project.window === "pipeline" && (
+            <div class="arch" data-architecture>
+              <div class="arch-track" style={`--stages:${project.architecture.length}`}>
+                {project.architecture.map((stage, si) => (
+                  <div class="arch-stage" data-stage>
+                    <button type="button" aria-expanded="false" aria-controls={`d-${project.slug}-${stage.id}`}>
+                      <span class="arch-num mono-tag">{String(si + 1).padStart(2, "0")}</span>
+                      <span class="arch-label">{stage.label}</span>
+                    </button>
+                    <div class="arch-detail" id={`d-${project.slug}-${stage.id}`} data-detail hidden>
+                      <p>{stage.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* HealthWise carries both a recording and an explorable pipeline. */}
+      {project.window === "video" && project.architecture && (
+        <div class="arch arch-wide" data-architecture data-reveal="up">
+          <p class="arch-caption mono-tag">Retrieval pipeline — select a stage</p>
+          <div class="arch-track" style={`--stages:${project.architecture.length}`}>
+            {project.architecture.map((stage, si) => (
+              <div class="arch-stage" data-stage>
+                <button type="button" aria-expanded="false" aria-controls={`d-${project.slug}-${stage.id}`}>
+                  <span class="arch-num mono-tag">{String(si + 1).padStart(2, "0")}</span>
+                  <span class="arch-label">{stage.label}</span>
+                </button>
+                <div class="arch-detail" id={`d-${project.slug}-${stage.id}`} data-detail hidden>
+                  <p>{stage.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+  ))}
+</div>
+
+<style>
+  .projects {
+    display: grid;
+    gap: clamp(var(--s-16), 12vh, var(--s-32));
+  }
+
+  .project-head {
+    display: flex;
+    gap: var(--s-4);
+    align-items: baseline;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: var(--s-4);
+    margin-bottom: var(--s-8);
+  }
+
+  .project-num {
+    color: var(--amber);
+    padding-top: 4px;
+  }
+
+  .project-name {
+    margin: 0;
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin: var(--s-2) 0 0;
+  }
+
+  .project-dot {
+    color: var(--ink-2);
+  }
+
+  /* Honest status for anything not finished — a recruiter asking about a
+     project should never discover it was further along on the site. */
+  .project-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin: var(--s-3) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--copper);
+    border: 1px solid color-mix(in srgb, var(--copper) 45%, transparent);
+    border-radius: 2px;
+    padding: 5px 9px;
+  }
+
+  .project-body {
+    display: grid;
+    gap: var(--s-8);
+  }
+
+  .project-blurb {
+    margin: 0;
+    font-size: var(--t-body-l);
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .project-detail {
+    margin: var(--s-4) 0 0;
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.75;
+  }
+
+  .chiplist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    list-style: none;
+    margin: var(--s-6) 0 0;
+    padding: 0;
+  }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 4px 8px;
+  }
+
+  .project-links {
+    margin: var(--s-6) 0 0;
+    font-size: var(--t-body-s);
+  }
+
+  /* ---- video ---- */
+
+  .media {
+    position: relative;
+  }
+
+  .poster {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--base-lift);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color var(--dur-2) var(--ease-glide), box-shadow var(--dur-2) var(--ease-glide);
+  }
+
+  .poster img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    filter: saturate(0.75) contrast(1.05) brightness(0.72);
+    transition: filter var(--dur-3) var(--ease-glide);
+  }
+
+  .poster:hover,
+  .poster:focus-visible {
+    border-color: var(--amber-edge);
+    box-shadow: 0 0 40px -12px var(--amber-glow);
+  }
+
+  .poster:hover img {
+    filter: saturate(0.95) contrast(1.02) brightness(0.85);
+  }
+
+  .poster-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11, 11, 15, 0.1), rgba(11, 11, 15, 0.75));
+  }
+
+  .poster-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-content: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 1px solid var(--amber-edge);
+    background: rgba(11, 11, 15, 0.6);
+    color: var(--amber);
+    backdrop-filter: blur(4px);
+    transition: background var(--dur-2) var(--ease-glide), box-shadow var(--dur-2) var(--ease-glide);
+  }
+
+  .poster:hover .poster-play {
+    background: rgba(255, 178, 77, 0.16);
+    box-shadow: 0 0 32px -4px var(--amber-glow);
+  }
+
+  .poster-label {
+    position: absolute;
+    left: var(--s-4);
+    bottom: var(--s-4);
+    color: var(--ink);
+  }
+
+  .lightbox {
+    border: none;
+    background: transparent;
+    padding: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lightbox::backdrop {
+    background: rgba(4, 4, 6, 0.88);
+    backdrop-filter: blur(6px);
+  }
+
+  .lightbox-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(1100px, 94vw);
+    background: var(--base-lift);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+  }
+
+  .lightbox-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lightbox-close {
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .lightbox-close:hover {
+    border-color: var(--amber-edge);
+    color: var(--amber);
+  }
+
+  .lightbox-frame {
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+
+  .lightbox-frame :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* ---- demos ---- */
+
+  .demo {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--base-lift);
+    overflow: hidden;
+  }
+
+  .demo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .demo-btn,
+  .demo-tab {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    padding: 8px 12px;
+    min-height: 44px; /* touch target */
+    cursor: pointer;
+    transition: color var(--dur-2) var(--ease-glide), border-color var(--dur-2) var(--ease-glide);
+  }
+
+  .demo-btn:hover,
+  .demo-tab:hover {
+    color: var(--amber);
+    border-color: var(--amber-edge);
+  }
+
+  .demo-tab.is-active {
+    color: var(--base);
+    background: var(--amber);
+    border-color: var(--amber);
+  }
+
+  .demo-canvas {
+    display: block;
+    width: 100%;
+    height: 300px;
+    touch-action: pan-y; /* page still scrolls; drag is captured per-pointer */
+  }
+
+  .demo-readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-6);
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2); /* 7.83:1 — data labels are content */
+  }
+
+  .demo-readout b {
+    color: var(--amber);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .demo-hint {
+    margin: 0;
+    padding: 0 var(--s-4) var(--s-3);
+  }
+
+  /* ---- match ---- */
+
+  .match-score {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding: var(--s-6) var(--s-4) var(--s-4);
+  }
+
+  .match-figure {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .match-bar {
+    position: absolute;
+    left: var(--s-4);
+    right: var(--s-4);
+    bottom: 0;
+    height: 2px;
+    background: var(--line);
+  }
+
+  .match-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--fill, 0%);
+    background: var(--amber);
+    transition: width var(--dur-3) var(--ease-glide);
+  }
+
+  /* .req* rules live in the is:global block below — those rows are built by
+     match.js at runtime, so they never carry Astro's scope attribute and
+     scoped rules silently do not apply to them. */
+
+  /* ---- architecture ---- */
+
+  .arch {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--base-lift);
+    padding: var(--s-4);
+  }
+
+  .arch-wide {
+    margin-top: var(--s-8);
+  }
+
+  .arch-caption {
+    margin: 0 0 var(--s-4);
+  }
+
+  .arch-track {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .arch-stage button {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    width: 100%;
+    min-height: 48px;
+    padding: var(--s-3);
+    background: none;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--line-strong);
+    border-radius: 2px;
+    color: var(--ink-2);
+    cursor: pointer;
+    text-align: left;
+    transition:
+      border-color var(--dur-2) var(--ease-glide),
+      color var(--dur-2) var(--ease-glide),
+      background var(--dur-2) var(--ease-glide);
+  }
+
+  .arch-stage button:hover {
+    color: var(--ink);
+    border-color: var(--amber-edge);
+  }
+
+  .arch-stage.is-active button {
+    color: var(--ink);
+    border-left-color: var(--amber);
+    background: var(--amber-wash);
+  }
+
+  .arch-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .arch-detail {
+    padding: var(--s-3) var(--s-3) var(--s-4) calc(var(--s-3) + 2px);
+    color: var(--ink-2);
+    font-size: var(--t-body-s);
+    line-height: 1.7;
+  }
+
+  .arch-detail p {
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  @media (min-width: 980px) {
+    .project-body {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: var(--s-12);
+      align-items: start;
+    }
+
+    /* Alternate sides so the section never settles into one rhythm. */
+    .project:nth-child(even) .project-copy {
+      order: 2;
+    }
+
+    .project:nth-child(even) .project-window {
+      order: 1;
+    }
+
+    .demo-canvas {
+      height: 340px;
+    }
+
+    .arch-track {
+      grid-template-columns: repeat(var(--stages, 5), minmax(0, 1fr));
+      gap: var(--s-1);
+    }
+
+    /* The stage wrapper dissolves so the button and its detail become direct
+       grid items. Buttons are pinned to row 1 and the open detail spans the
+       full width on row 2 — previously the detail was absolutely positioned,
+       which resolved its static position to the top of the stage and printed
+       it straight over the button label. */
+    .arch-stage {
+      display: contents;
+    }
+
+    .arch-stage button {
+      grid-row: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--s-1);
+      border-left: 1px solid var(--line);
+      border-top: 2px solid var(--line-strong);
+    }
+
+    .arch-stage.is-active button {
+      border-left-color: var(--line);
+      border-top-color: var(--amber);
+    }
+
+    .arch-detail {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      border-left: 2px solid var(--amber);
+      background: var(--amber-wash);
+      margin-top: var(--s-2);
+    }
+  }
+</style>
+
+<!-- Global because match.js builds these rows at runtime; elements created
+     after render never receive Astro's scope attribute, so scoped selectors
+     would not match them. -->
+<style is:global>
+  .reqs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .req {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--s-2) var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    font-size: var(--t-body-s);
+    line-height: 1.5;
+  }
+
+  .req-mark {
+    color: var(--ink-3);
+    font-size: 0.75rem;
+  }
+
+  .req-covered .req-mark {
+    color: var(--amber);
+  }
+
+  .req-partial .req-mark {
+    color: var(--copper);
+  }
+
+  .req-label {
+    color: var(--ink);
+  }
+
+  .req-missing .req-label {
+    color: var(--ink-2);
+  }
+
+  .req-state {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--tr-mono);
+    text-transform: uppercase;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  .req-covered .req-state {
+    color: var(--amber);
+  }
+
+  .req-evidence {
+    grid-column: 2 / -1;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--ink-2);
+  }
+</style>
